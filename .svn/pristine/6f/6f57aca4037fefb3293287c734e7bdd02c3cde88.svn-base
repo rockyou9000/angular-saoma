@@ -1,0 +1,117 @@
+html,
+body {
+    font-size: 14px;
+    height: 100%;
+}
+
+.hover {
+    opacity: .8;
+}
+
+.flex-wrap {
+    display: -webkit-box;
+    display: box;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.flex-con {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+.flex-vertical {
+    -webkit-box-orient: vertical;
+    -webkit-flex-flow: column;
+    flex-flow: column;
+}
+
+.border-t,
+.border-b {
+    position: relative;
+}
+
+.border-t:before,
+.border-b:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #ddd;
+    right: 0;
+    height: 1px;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+
+.border-b:after {
+    top: auto;
+    bottom: 0;
+}
+
+#wrap {
+    height: 100%;
+}
+
+#wrap {
+    background: transparent url(../image/login_bg.jpg) 0 0 no-repeat;
+    background-size: cover;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.login {
+    background-color: rgba(255, 255, 255, 0.7);
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    width: 80%;
+}
+
+.login h3 {
+    border-bottom: 1px solid #d1d5d1;
+    color: #333;
+    font-weight: normal;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.login label {
+    border: 1px solid #999;
+    border-radius: 5px;
+    color: #999;
+    display: block;
+    margin: 12px auto;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    text-align: center;
+    width: 80%;
+}
+
+.login label input {
+    border: 1px solid #eee;
+    margin-left: 9px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-indent: 8px;
+    width: 120px;
+}
+
+.login button {
+    background: rgba(0, 0, 0, 0) linear-gradient(#38ac4b, #239b3a) repeat scroll 0 0;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    color: #fff;
+    display: block;
+    margin: 19px auto 0;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    width: 80%;
+}

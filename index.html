@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="saoApp" ng-controller="mainCtrl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>saoApp</title>
+    <link rel="stylesheet" type="text/css" href="css/api.css" />
+    <link rel="stylesheet" type="text/css" href="css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="css/login.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/modal.css" />
+    <link rel="stylesheet" type="text/css" href="css/pandian.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/ngDialog.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/ngDialog_theme_default.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/ngDialog_theme_plain.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/ui-dialog.css" />
+
+    <script type="text/javascript" src="script/angularjs/angular.js"></script>
+    <script type="text/javascript" src="script/angularjs/angularAnimate.js"></script>
+    <script type="text/javascript" src="script/angularjs/angularTouch.js"></script>
+    <script type="text/javascript" src="script/angularjs/angularRoute.js"></script>
+    <script type="text/javascript" src="script/angularjs/ngSanitize.js"></script>
+    <script type="text/javascript" src="script/angularjs/ngDialog.js"></script>
+
+    <script type="text/javascript" src="script/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="script/jquery/jquery.md5.js"></script>
+
+    <!-- endbuild -->
+    <!-- build:model model/model.js -->
+    <script type="text/javascript" src="model/database.js"></script>
+    <!-- endbuild -->
+    <!-- build:controllers controllers/controllers.js -->
+    <script type="text/javascript" src="controllers/mainctrl.js"></script>
+    <script type="text/javascript" src="controllers/loginctrl.js"></script>
+    <script type="text/javascript" src="controllers/indexctrl.js"></script>
+    <script type="text/javascript" src="controllers/configctrl.js"></script>
+    <script type="text/javascript" src="controllers/panctrl.js"></script>
+    <script type="text/javascript" src="controllers/listctrl.js"></script>
+    <!-- endbuild -->
+    <!-- build:common script/common.js -->
+
+    <!--<script type="text/javascript" src="script/filter.js"></script>
+    <script type="text/javascript" src="script/directives.js"></script>
+    <script type="text/javascript" src="script/db.js"></script>
+    <script type="text/javascript" src="script/app.js"></script>
+    <script type="text/javascript" src="script/service.js"></script>-->
+    <!-- endbuild -->
+
+</head>
+
+<body>
+    <div class="main_wrap" id="main_wrap" ng-view></div>
+    <span id="toastFollow"></span>
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/app.js"></script>
+<script type="text/javascript" src="./script/config.js"></script>
+<script type="text/javascript" src="./script/adaptor.js"></script>
+
+</html>

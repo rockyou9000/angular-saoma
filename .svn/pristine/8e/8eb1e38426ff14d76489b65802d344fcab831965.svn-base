@@ -1,0 +1,51 @@
+.head label {
+    border: 1px solid #e4e4e4;
+    box-sizing: border-box;
+    color: #999999;
+    float: left;
+    line-height: 23px;
+    padding: 6px 0;
+    text-align: center;
+    width: 50%;
+}
+
+.head label span {
+    display: block;
+    color: #333333;
+}
+
+.body {
+    display: -webkit-box;
+    display: box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.body .half {
+    width: 50%;
+}
+
+.body span {
+    background: #30d06d;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    color: #fff;
+    display: block;
+    margin: 0 auto;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: center;
+    width: 90%;
+}
+
+.body span:hover {
+    background-color: #1ec153;
+}
+
+.config_list {
+    width: 100%;
+    text-align: center;
+}

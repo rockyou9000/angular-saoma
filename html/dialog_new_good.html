@@ -1,0 +1,23 @@
+<div class="modal-wrapper">
+    <div>
+        <div class="modal-header">
+            <h3>{{title}}</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-inner">
+                <label>品名<input type="text" class="goods_name" ng-model="selectItem['goods_name']"><button class="sel_goods" ng-click="searchGoods()">选择</button></label>
+                <label>货号<input type="text" ng-model="GOODS_SN" readonly></label>
+                <label>单价<input type="text" ng-model="GOODS_PRICE" readonly></label>
+                <label>数量<input type="text" ng-model="PAN_NUM" ng-pattern="/^[1-9]\d*$/"></label>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <slot name="footer">
+                <button class="modal-save" ng-click="modal_save()">保存</button>
+                <button class="modal-close" ng-click="modal_close()">关闭</button>
+            </slot>
+        </div>
+    </div>
+</div>

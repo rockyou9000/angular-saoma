@@ -1,0 +1,5 @@
+angular.module('saoApp', ['ngTouch', 'ngRoute', 'ngAnimate', 'ngDialog'])
+    .controller('MainCtrl', MainCtrl)
+    .config(
+
+    )

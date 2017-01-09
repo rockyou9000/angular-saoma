@@ -1,0 +1,10 @@
+var loginCtrl = [
+    '$rootScope', '$scope', '$location',
+    function($rootScope, $scope, $location) {
+        $scope.loginName = "admin";
+        $scope.code = "8888";
+        $scope.userLogin = function() {
+            $location.path('/index')
+        }
+    }
+]

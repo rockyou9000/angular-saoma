@@ -1,0 +1,34 @@
+var indexCtrl = [
+    '$rootScope', '$scope', '$location',
+    function($rootScope, $scope, $location) {
+        $scope.pan_set = true;
+        $scope.showModal = false;
+
+        $scope.BA_ID = 110670;
+        $scope.BA_NAME = '周骏';
+
+
+        $scope.PAPER_NUM = 00653326545;
+        $scope.PAN_SHOP = '上海中山公园晶品';
+        $scope.PAN_DATE = '';
+
+
+        $scope.closeMain = function() {
+            $location.path('/');
+        };
+        $scope.showConfig = function() {
+            $location.path('/config');
+        };
+        $scope.showPan = function() {
+            $location.path('/pandian');
+        };
+
+        $scope.modal_save = function() {
+            $location.path('/pandian');
+        };
+        $scope.modal_close = function() {
+            $scope.showModal = false;
+        }
+
+    }
+]

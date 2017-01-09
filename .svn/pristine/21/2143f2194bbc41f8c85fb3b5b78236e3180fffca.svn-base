@@ -1,0 +1,77 @@
+var loginCtrl = [
+    '$rootScope', '$scope', '$location', '$http', '$q', 'dbOpen', 'dbInit', 'dbInsert',
+    function($rootScope, $scope, $location, $http, $q, dbOpen, dbInit, dbInsert) {
+        $scope.loginName = "";
+        $scope.code = "";
+        $scope.userLogin = function() {
+            var firstLaunch = $api.getStorage('firstLaunch');
+            //第一次登录
+            if (!firstLaunch) {
+                if ($scope.loginName == _configData.admin && $.md5($scope.code) == _configData.adminPass) {
+                    //初始化数据库
+                    dbOpen.openDatabase('lqx_goods')
+                        .then(function() {
+
+                            //创建数据库表
+                            dbInit('lqx_goods')
+                                .then(function() {
+
+                                    // 插入数据
+                                    dbInsert('lqx_goods')
+                                        .then(function() {
+
+                                            alert('插入成功!')
+
+                                            //设置localstorage
+                                            $api.setStorage('firstLaunch', 1);
+                                            //跳转至设置页
+                                            $location.path('/config')
+                                        })
+                                        .catch(function() { alert("insert_error") })
+                                })
+                                .catch(function() { alert("create_error") })
+                        }).catch(function() {
+                            alert('open_error')
+                        })
+
+                } else {
+                    alert('登录密码错误!')
+                }
+                //第二次登录
+            } else {
+                $http.post('http://cis.sh-lei.cn/sign/test', {
+                        name: $scope.loginName,
+                        code: $scope.code
+                    }).then(function(resp) {
+
+                        if (resp.data.code == 0) {
+                            //跳转至主页
+                            $location.path('/index')
+                        }
+                    }, function(err) {
+                        alert(loginErr)
+                    })
+                    // $.ajax({
+                    //     url: 'http://cis.sh-lei.cn/sign/test',
+                    //     type: 'post',
+                    //     data: {
+                    //         name: $scope.loginName,
+                    //         code: $scope.code
+                    //     },
+                    //     success: function(resp) {
+                    //         var resp = JSON.parse(resp);
+                    //         if (resp.code == 0) {
+                    //             // $scope.resetInput();
+                    //             $location.path('/index')
+                    //         }
+                    //     },
+                    //     error: function(err) {
+                    //         alert(err);
+                    //     }
+                    // })
+            }
+        }
+    }
+
+]
+loginCtrl.$injector = ['$rootScope', '$scope', '$location', '$http', '$q', 'dbOpen', 'dbInit', 'dbInsert'];

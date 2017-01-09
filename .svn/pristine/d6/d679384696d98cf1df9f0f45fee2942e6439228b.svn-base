@@ -1,0 +1,7 @@
+{
+	"name": "YsPos",
+    "version": "1.0",
+    "sqls": {
+    	"product_goods":""CREATE TABLE IF NOT EXISTS,
+    }
+}

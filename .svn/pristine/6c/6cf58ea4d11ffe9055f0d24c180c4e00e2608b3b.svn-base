@@ -1,0 +1,5 @@
+<div class="modal_select">
+    <ul>
+        <li ng-repeat="item in list" ng-click="getItem($index)">{{item.shop_name}}</li>
+    </ul>
+</div>

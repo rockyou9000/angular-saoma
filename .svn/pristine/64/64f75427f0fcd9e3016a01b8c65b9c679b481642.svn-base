@@ -1,0 +1,19 @@
+<div id="app">
+    <div id="header">
+        <i ng-click="page_back()">返回</i>
+        <h2>门店盘点工具</h2>
+    </div>
+    <div id="wrap">
+        <div class="head clearfix">
+            <h3 class="set_title">盘点 设置</h3>
+            <label class="ba_detail">工号<span>{{BA_ID}}</span></label>
+            <label class="ba_detail">姓名<span>{{BA_NAME}}</span></label>
+        </div>
+        <div class="body">
+            <ul class="config_list">
+                <li>清空缓存: <input type="button" ng-click="clear()" value="点击清空"></li>
+                <li>默认启用扫码枪: <input type="checkbox" v-model="default_gun"></li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../css/list.css" />
+    <script src="../script/vue.js"></script>
+    <script src="../script/vue-router.js"></script>
+    <script src="../script/reqwest.js"></script>
+    <script src="../script/api.js"></script>
+    <script src="../config.js"></script>
+    <script src="../adaptor.js"></script>
+    <script>
+        //tbody 高度自适应代码
+        function tbody_init() {
+            var dtl = $api.dom('.detail_list');
+            debugger;
+            var dtl_h = dtl.offsetHeight;
+            var tbo = dtl.getElementsByTagName('tbody')[0];
+            tbo.style.height = (dtl_h - 21) + 'px';
+        }
+    </script>
+</head>
+
+<body>
+    <!-- main -->
+    <div id="app">
+        <div id="header">
+            <i @click="closeWin">关闭</i>
+            <h2>{{check}}</h2>
+        </div>
+        <div id="wrap" class="wrapbg_for_list">
+            <!--<pan-list></pan-list>-->
+            <!--<pan-detail></pan-detail>-->
+            <router-view></router-view>
+        </div>
+    </div>
+    <!-- main -->
+
+    <script type="text/x-template" id="pan_list">
+        <div id="pan_list_wrap">
+            <div class="head clearfix">
+                <label>盘点日期: <input type="date" class="date_sel"> &nbsp;-&nbsp; <input type="date" class="date_sel"></label>
+                <label>单据编号: <input type="text" class="paper_num"><button type="button">查询</button></label>
+            </div>
+            <div class="body">
+                <ul class="pan_list">
+                    <li class="list_item" v-for="item in data" @click="goDetail">
+                        <p><span class="list_l">单据编号:{{item.PAPER_NUM}}</span><span>盘点人:{{item.PAN_ID}} {{item.PAN_PERSON}}</span></p>
+                        <p><span class="list_l">盘点店铺:{{item.PAN_SHOP}}</span><span>盘点状态:{{item.PAN_STATUS}}</span></p>
+                        <p><span class="list_l">盘点日期:{{item.PAN_DATE}}</span><span>盘点差异:{{item.PAN_DIFF}}</span></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="pan_detail">
+        <div id="pan_detail_wrap">
+            <div class="detail_head">
+                <h3>单据编号:{{PAPER_NUM}}</h3>
+                <p><span class="list_l">单据人工号:{{PAN_ID}}</span><span>盘点日期:{{PAN_DATE}}</span></p>
+                <p><span class="list_l">盘点人姓名:{{PAN_PERSON}}</span><span>盘点店铺:{{PAN_SHOP}}</span></p>
+                <p><span class="list_l">商品总价:{{GOODS_SUM_PRICE}}</span><span>实盘总数:{{GOODS_NUM}}</span></p>
+                <p class="filter_input">定位:<input type="text" v-model="filter"><button type="button">查询</button></p>
+                <p><span>扫码类型 :<i class="sao_type_sys" @click="saoMa">{{sao_type}}</i></span></p>
+                <!--<h1>商品条形码:{{sao_num}}</h1>
+                <h2 @click="saoMa">点击扫码</h2>-->
+            </div>
+            <div class="detail_body">
+                <h3>商品明细</h3>
+                <ul class="edit_btn clearfix">
+                    <li>添加</li>
+                    <li>删除</li>
+                    <li>确认并上传</li>
+                    <li>拉取差异</li>
+                </ul>
+            </div>
+            <div class="detail_list">
+                <table>
+                    <thead>
+                        <th><input type="checkbox">全选</th>
+                        <th>条码</th>
+                        <th>品名</th>
+                        <th>实盘数</th>
+                        <th>账面数</th>
+                        <th>盈亏数</th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in good_data">
+                            <td><input type="checkbox" v-model="item.SEL"></td>
+                            <td>{{item.SKU}}</td>
+                            <td>{{item.NAME}}</td>
+                            <td>{{item.NUM}}</td>
+                            <td>{{item.ACCOUNT_NUM}}</td>
+                            <td>{{item.ACCOUNT_DIFF}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+    <script>
+        //empty Vue instance as central event bus
+        var trans = new Vue();
+
+        //register pan-list
+        var panlist = Vue.component('pan-list', {
+            template: '#pan_list',
+            data: function() {
+                return {
+                    data: [{
+                        PAPER_NUM: 5153313513,
+                        PAN_PERSON: '周骏',
+                        PAN_ID: 6052037,
+                        PAN_SHOP: '中山公园龙之梦',
+                        PAN_STATUS: '已上传',
+                        PAN_DATE: '2016/11/30',
+                        PAN_DIFF: '未拉取'
+                    }, {
+                        PAPER_NUM: 5153123513,
+                        PAN_PERSON: '周二骏',
+                        PAN_ID: 6052037,
+                        PAN_SHOP: '虹口龙之梦',
+                        PAN_STATUS: '未确认',
+                        PAN_DATE: '2013/11/30',
+                        PAN_DIFF: '已拉取'
+                    }, {
+                        PAPER_NUM: 12332313513,
+                        PAN_PERSON: '周三骏',
+                        PAN_ID: 6052037,
+                        PAN_SHOP: '中山公园龙之梦',
+                        PAN_STATUS: '未上传',
+                        PAN_DATE: '2016/11/30',
+                        PAN_DIFF: '未拉取'
+                    }]
+                }
+            },
+            methods: {
+                goDetail: function() {
+                    trans.$emit('is_detail', 1);
+                    router.replace('/detail');
+                }
+            }
+        })
+
+        //register pan-detail
+        var pandetail = Vue.component('pan-detail', {
+            template: '#pan_detail',
+            data: function() {
+                return {
+                    // 盘点状态:1.未确认 2.未上传 3.已上传
+                    PAN_STATUS_CODE: 1,
+                    //盘点差异:1.未拉取 2.已拉取
+                    PAN_DIFF_CODE: 1,
+
+                    PAPER_NUM: 5153313513,
+                    PAN_PERSON: '周骏',
+                    PAN_ID: 6052037,
+                    PAN_SHOP: '中山公园龙之梦',
+                    PAN_DATE: '2016/11/30',
+                    GOODS_SUM_PRICE: '5215.00',
+                    GOODS_NUM: '15',
+
+                    filter: 'KC',
+                    sao_flag: 1, //判断是否在列表内找到相同商品
+                    sao_num: '',
+
+                    sao_type: '扫一扫',
+
+                    good_data: [{
+                        SEL: false,
+                        SKU: 691110011062,
+                        NAME: '红石榴活颜焕彩',
+                        NUM: 3,
+                        ACCOUNT_NUM: 1,
+                        ACCOUNT_DIFF: -2
+                    }]
+                }
+            },
+            mounted: function() {
+                tbody_init();
+            },
+            methods: {
+                saoMa: function() {
+                    var that = this;
+                    lqx_app.scanner.openScanner({
+                        saveToAlbum: false
+                    }, function(ret, err) {
+                        if (ret.eventType != 'show') { //禁用掉show回调,否则会有两次回调方法
+
+                            that.sao_flag = 1; //表示是否在列表内找到相同商品
+
+                            alert(JSON.stringify(ret));
+
+                            for (var i = 0, length = that.good_data.length; i < length; i++) {
+                                if (that.good_data[i].SKU == ret.content) {
+                                    item.NUM++;
+                                    that.sao_flag = 0;
+                                }
+                            }
+                            // 盘点单内没有找到相同商品,需要插入新数据
+                            if (that.sao_flag) {
+                                var sao_good_data = that.select(ret.content)
+
+                            }
+
+                        }
+                    });
+                },
+                //根据SKU进行数据库查找
+                select: function(value) {
+                    var ret = lqx_app.db.selectSqlSync({
+                        name: 'test123',
+                        sql: 'SELECT * FROM `test123` where sku_sn = "' + value + '"'
+                    });
+                    return ret
+                }
+            }
+        })
+
+        //route Use plugin
+        Vue.use(VueRouter)
+
+        //route config
+        var routes = [{
+            path: '/',
+            component: panlist
+        }, {
+            path: '/detail',
+            component: pandetail
+        }]
+
+        //create the router
+        var router = new VueRouter({
+            routes: routes
+        })
+
+        // start app
+        var list_app = new Vue({
+            router: router,
+            data: {
+                is_detail: false,
+                check: '查看盘点单'
+            },
+            methods: {
+                closeWin: function() {
+                    if (this.is_detail) {
+                        this.is_detail = false;
+                        list_app.check = '查看盘点单';
+                        router.replace('/')
+                    } else {
+                        api.closeWin();
+                    }
+                }
+            }
+        }).$mount('#app')
+
+        trans.$on('is_detail', function(msg) {
+            console.log(msg);
+            if (msg) {
+                list_app.is_detail = true;
+                list_app.check = '盘点单详情';
+            }
+        })
+    </script>
+</body>
+
+</html>

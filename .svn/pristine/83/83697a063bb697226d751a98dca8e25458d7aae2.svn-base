@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+    <script src="./script/vue.js"></script>
+    <script src="./script/reqwest.js"></script>
+    <script src="./script/api.js"></script>
+    <script src="./script/MD5.js"></script>
+    <script src="./config.js"></script>
+    <script src="./adaptor.js"></script>
+</head>
+
+<body>
+    <div id="wrap" class="flex-wrap">
+        <div class="login">
+            <h3>林清轩登录</h3>
+            <label>工号：<input type="text" v-model="loginName"></label>
+            <label>密码：<input type="password" v-model="code"></label>
+            <button @click="userLogin">登录</button>
+        </div>
+        <!--<button @click="create">新建数据库</button>
+        <button @click="execute">创建表</button>
+        <button @click="insert(arr)">插入数据</button>
+        <button @click="select">查询数据</button>-->
+        <button @click="clear">清空缓存</button>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#wrap',
+            data: {
+                loginName: '',
+                code: ''
+            },
+            methods: {
+                userLogin: function() {
+                    var that = this;
+                    var firstLaunch = $api.getStorage('firstLaunch');
+                    //第一次登录
+                    if (!firstLaunch) {
+                        if (this.loginName == _configData.admin && encryptToMD5(this.code) == _configData.adminPass) {
+
+                            //初始化数据库
+                            this.create();
+                            //创建数据库表
+                            this.execute();
+                            //远程获取数据,插入数据库表
+                            this.userGetData();
+                            //设置localstorage
+                            $api.setStorage('firstLaunch', 1);
+                            //置空输入框
+                            this.resetInput();
+                            //进入配置页面
+                            api.openWin({
+                                name: 'win_config',
+                                url: './html/config.html',
+                                useWKWebView: true,
+                                historyGestureEnabled: true,
+                                bounces: true
+                            });
+                        } else {
+                            alert('登录密码错误!')
+                        }
+                        //第二次登录
+                    } else {
+                        reqwest({
+                            url: 'http://cis.sh-lei.cn/sign/test',
+                            method: 'post',
+                            type: 'json',
+                            data: {
+                                name: this.loginName,
+                                code: this.code
+                            },
+                            crossOrigin: true,
+                            // contentType: 'application/json',
+                            success: function(response) {
+                                if (response.code == 0) {
+                                    //置空输入框
+                                    that.resetInput();
+                                    api.openWin({
+                                        name: 'win_main',
+                                        url: './html/main.html',
+                                        useWKWebView: true,
+                                        historyGestureEnabled: true,
+                                        bounces: true
+                                    });
+                                }
+                            },
+                            error: function(err) {
+                                alert(err)
+                            }
+                        })
+                    }
+
+                },
+                //远程获取数据库数据,并插入数据库
+                userGetData: function() {
+                    var that = this;
+                    reqwest({
+                        url: 'http://devadmin.lqxshop.com/?app_act=testmongodb/product_list',
+                        method: 'get',
+                        type: 'jsonp',
+                        data: {
+                            //未定义参数
+                        },
+                        success: function(response) {
+                            if (response.code == 0) {
+                                that.insert(response)
+                            }
+                        },
+                        error: function(err) {
+                            alert(err)
+                        }
+                    })
+                },
+                //初始化数据库
+                create: function() {
+                    var ret = lqx_app.db.openDatabaseSync({
+                        name: 'test123'
+                    })
+                    alert(JSON.stringify(ret));
+                },
+                //创建数据库表
+                execute: function() {
+                    var ret = lqx_app.db.executeSqlSync({
+                        name: 'test123',
+                        sql: 'CREATE TABLE `test123` (`goods_sn`  varchar(50) NOT NULL ,`sku_sn`  char(50) NOT NULL ,`goods_name`  varchar(255) NOT NULL ,PRIMARY KEY (sku_sn))'
+                    })
+                    alert(JSON.stringify(ret));
+                },
+                //向数据库表中插入数据
+                insert: function(arr) {
+                    var data = arr.list;
+                    var data_str = "";
+                    var loop_num = parseInt(data.length / 150);
+
+                    for (var j = 0; j < loop_num; j++) {
+                        this._insert_loop(data);
+                        data.length < 150 ? data = [] : data.splice(0, 150);
+                    }
+                },
+                //insert内部方法
+                _insert_loop: function(arr) {
+                    var data_str = '';
+                    for (var i = 0; i < 150; i++) {
+                        data_str += "('" + arr[i].goods_sn + "','" + arr[i].sku_sn + "','" + arr[i].goods_name + "'),"
+                    }
+                    data_str = data_str.slice(0, -1)
+
+                    var ret = lqx_app.db.executeSqlSync({
+                        name: 'test123',
+                        sql: 'INSERT INTO `test123` (`goods_sn`, `sku_sn`, `goods_name`) VALUES ' + data_str + ''
+                    })
+                    alert(JSON.stringify(ret));
+                },
+                //清理localStorage
+                clear: function() {
+                    $api.clearStorage();
+                    alert('清楚成功 ! ')
+                },
+                //置空输入框
+                resetInput: function() {
+                    this.loginName = '';
+                    this.code = '';
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>

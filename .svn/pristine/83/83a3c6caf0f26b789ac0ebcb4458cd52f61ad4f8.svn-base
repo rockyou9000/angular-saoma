@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <script src="../script/vue.js"></script>
+    <script src="../script/api.js"></script>
+    <script src="../config.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div id="header">
+            <i @click="closeMain">返回</i>
+            <h2>门店盘点工具</h2>
+        </div>
+        <div id="wrap">
+            <div class="head clearfix">
+                <h3 class="set_title">盘点 设置</h3>
+                <label>工号<span>{{BA_ID}}</span></label>
+                <label>姓名<span>{{BA_NAME}}</span></label>
+            </div>
+            <div class="body">
+                <ul class="config_list">
+                    <li>清空缓存: <input type="button" @click="clear" value="点击清空"></li>
+                    <li>默认启用扫码枪: <input type="checkbox" v-model="default_gun"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script type="text/javascript">
+    // start app
+    var modal = new Vue({
+        el: '#app',
+        data: {
+            BA_ID: '000000',
+            BA_NAME: '管理员',
+            default_gun_temp: ''
+        },
+        computed: {
+            default_gun: {
+                get: function() {
+                    return this.default_gun_temp;
+                },
+                set: function(value) {
+                    this.default_gun_temp = !this.default_gun_temp;
+                    _configData.default_gun = this.default_gun_temp;
+                    $api.setStorage('configData', _configData);
+                    return this.default_gun_temp;
+                }
+
+            }
+
+        },
+        methods: {
+            //清理localStorage
+            clear: function() {
+                $api.clearStorage();
+                alert('清楚成功 ! ')
+            },
+            closeMain: function() {
+                api.closeWin();
+            }
+        }
+
+    })
+
+    //修改vue实例属性
+    var data_get = {
+        setDefault: function() {
+            if (_configData) {
+                modal.default_gun_temp = _configData.default_gun;
+            }
+        }
+    }
+    data_get.setDefault()
+</script>
+
+</html>

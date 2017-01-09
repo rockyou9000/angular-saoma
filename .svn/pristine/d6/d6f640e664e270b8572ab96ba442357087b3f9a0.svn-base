@@ -1,0 +1,66 @@
+var loginCtrl = [
+    '$rootScope', '$scope', '$location',
+    function($rootScope, $scope, $location) {
+        $scope.loginName = "";
+        $scope.code = "";
+        $scope.userLogin = function() {
+            var firstLaunch = $api.getStorage('firstLaunch');
+            //第一次登录
+            if (!firstLaunch) {
+                if ($scope.loginName == _configData.admin && $.md5($scope.code) == _configData.adminPass) {
+
+                    //初始化数据库
+                    this.create();
+                    //创建数据库表
+                    this.execute();
+                    //远程获取数据,插入数据库表
+                    this.userGetData();
+                    //设置localstorage
+                    $api.setStorage('firstLaunch', 1);
+                    //置空输入框
+                    this.resetInput();
+                    //进入配置页面
+                    api.openWin({
+                        name: 'win_config',
+                        url: './html/config.html',
+                        useWKWebView: true,
+                        historyGestureEnabled: true,
+                        bounces: true
+                    });
+                } else {
+                    alert('登录密码错误!')
+                }
+                //第二次登录
+            } else {
+                reqwest({
+                    url: 'http://cis.sh-lei.cn/sign/test',
+                    method: 'post',
+                    type: 'json',
+                    data: {
+                        name: this.loginName,
+                        code: this.code
+                    },
+                    crossOrigin: true,
+                    // contentType: 'application/json',
+                    success: function(response) {
+                        if (response.code == 0) {
+                            //置空输入框
+                            that.resetInput();
+                            api.openWin({
+                                name: 'win_main',
+                                url: './html/main.html',
+                                useWKWebView: true,
+                                historyGestureEnabled: true,
+                                bounces: true
+                            });
+                        }
+                    },
+                    error: function(err) {
+                        alert(err)
+                    }
+                })
+            }
+            // $location.path('/index')
+        }
+    }
+]

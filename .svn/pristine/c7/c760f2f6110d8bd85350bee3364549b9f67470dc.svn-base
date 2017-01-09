@@ -1,0 +1,111 @@
+angular.module('lqx_db', [])
+
+//打开数据库 ===========================================================
+.factory('dbOpen', ['$q', function($q) {
+    var deferred = $q.defer();
+    var promise = deferred.promise;
+    var openDatabase = function(name, path) {
+        lqx_app.db.openDatabase({ name: name, path: path }, function(ret, err) {
+            if (!ret.status) {
+                openDatabase(name, path);
+            } else {
+                deferred.resolve('success');
+            }
+        });
+        return promise;
+    };
+    return {
+        openDatabase: openDatabase
+    };
+}])
+
+//数据库初始化
+.factory('dbInit', ['$q', '$http', function($q, $http) {
+    var installSql;
+    var deferredInstall = {};
+    var promiseInstall = {};
+
+    var executeSql = function(promiseInstall, deferredInstall, installSql, name, index, sqls_arr) {
+        var o = sqls_arr[index];
+
+        if (o == undefined) return;
+
+        var sql = installSql.sqls[o];
+        //console.log(sql);
+        lqx_app.db.executeSql({ 'name': name, 'sql': sql }, function(ret, err) {
+
+            if (!ret.status) {
+                executeSql(promiseInstall, deferredInstall, installSql, name, index, sqls_arr);
+            } else {
+                deferredInstall[o].resolve(o + '执行成功!');
+                index++;
+                executeSql(promiseInstall, deferredInstall, installSql, name, index, sqls_arr);
+            }
+        });
+    };
+
+    return function(name) {
+        return $http.get('./install/sql.json').then(function(response) {
+            installSql = response.data;
+            var sqls_arr = Object.keys(installSql.sqls);
+            for (var i = 0; i < sqls_arr.length; i++) {
+                var o = sqls_arr[i];
+                deferredInstall[o] = $q.defer();
+                promiseInstall[o] = deferredInstall[o].promise;
+            }
+
+            var index = 0;
+            //执行安装sql脚本
+            executeSql(promiseInstall, deferredInstall, installSql, name, index, sqls_arr);
+
+            return $q.all(promiseInstall);
+        })
+    }
+}])
+
+//插入数据
+.factory('dbInsert', ['$q', '$http', function($q, $http) {
+    var deferred = $q.defer();
+    var promise = deferred.promise;
+
+    var _insert_loop = function(data_arr) {
+        var data_str = '';
+        for (var i = 0; i < 150; i++) {
+            data_str += "('" + data_arr[i].goods_sn + "','" + data_arr[i].sku_sn + "','" + data_arr[i].goods_name + "'),"
+        }
+        data_str = data_str.slice(0, -1)
+
+        lqx_app.db.executeSql({
+            name: 'GOODS_LIST',
+            sql: 'INSERT INTO `GOODS_LIST` (`goods_sn`, `sku_sn`, `goods_name`) VALUES ' + data_str + ''
+        }, function(ret, err) {
+            if (ret.status) {
+                deferred.resolve('success');
+            } else {
+                deferred.reject('数据插入失败');
+            }
+        });
+    }
+
+
+    var insertData = function(response) {
+        var data = response.list;
+        var data_str = "";
+        var loop_num = parseInt(data.length / 150);
+
+        for (var j = 0; j < loop_num; j++) {
+            //调用_insert_loop 方法完成一次数据插入
+            _insert_loop(data);
+            data.length < 150 ? data = [] : data.splice(0, 150); //去除已插入的150条数据
+        }
+    }
+
+    var insertSql = '';
+    $http.jsonp('http://devadmin.lqxshop.com/?app_act=testmongodb/product_list?callback=JSON_CALLBACK').success(function(response) {
+        if (response.code == 0) {
+            insertData(response)
+        }
+    })
+
+    return promise;
+}])

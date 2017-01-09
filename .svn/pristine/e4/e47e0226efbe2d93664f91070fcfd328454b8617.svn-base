@@ -1,0 +1,152 @@
+var listCtrl = [
+    '$rootScope', '$scope', '$location',
+    function($rootScope, $scope, $location) {
+
+        // 盘点状态:1.未确认 2.未上传 3.已上传
+        $scope.PAN_STATUS_CODE = 1;
+        //盘点差异:1.未拉取 2.已拉取
+        $scope.PAN_DIFF_CODE = 1;
+        $scope.PAPER_NUM = 5153313513;
+        $scope.PAN_PERSON = '周骏';
+        $scope.PAN_ID = 6052037;
+        $scope.PAN_SHOP = '中山公园龙之梦';
+        $scope.PAN_DATE = '2016/11/30';
+        $scope.GOODS_SUM_PRICE = '5215.00';
+        $scope.GOODS_NUM = '15';
+        $scope.filter = 'KC';
+        $scope.sao_flag = 1;
+        $scope.sao_num = '';
+        $scope.sao_type = '扫一扫';
+
+        $scope.good_data = [{
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            },
+            {
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }
+        ]
+
+        $scope.saoMa = function(databaseName) {
+
+            function select(value) {
+                var ret = lqx_app.db.selectSqlSync({
+                    name: databaseName,
+                    sql: 'SELECT * FROM `goods_list` where sku_sn = "' + value + '"'
+                });
+                return ret
+            }
+
+            lqx_app.scanner.openScanner({
+                saveToAlbum: false
+            }, function(ret, err) {
+                if (ret.eventType != 'show') { //禁用掉show回调,否则会有两次回调方法
+
+                    // if (!ret.content) return; //扫码取消 退出
+
+                    $scope.sao_flag = 1; //表示是否在列表内找到相同商品
+
+                    alert(JSON.stringify(ret));
+
+                    for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                        if ($scope.good_data[i].SKU == ret.content) {
+                            $scope.good_data[i].NUM++;
+                            that.sao_flag = 0;
+                        }
+                    }
+
+
+                    // 扫码返回
+                    // {content:6959  , eventType:success}
+                    // 数据库查询返回
+                    // {data:[{sku_sn:695938,goods_name:芦荟胶,goods_sn:c.c.f.11.25}],status:true}
+
+                    // 盘点单内没有找到相同商品,需要插入新数据
+                    if ($scope.sao_flag) {
+                        var sao_good_data = select(ret.content)
+
+                        alert(JSON.stringify(sao_good_data))
+                        alert(sao_good_data)
+                        alert(sao_good_data.data)
+                        alert(sao_good_data.data[0])
+                        alert(sao_good_data.data[0].sku_sn)
+
+                        var new_list_item = {
+                            SEL: false,
+                            SKU: sao_good_data.data[0].sku_sn,
+                            NAME: sao_good_data.data[0].goods_name,
+                            NUM: 1,
+                            ACCOUNT_NUM: 5,
+                            ACCOUNT_DIFF: 3
+                        }
+                        $scope.good_data.pop(new_list_item)
+                    }
+                }
+            });
+        }
+
+        $scope.closeWin = function() {
+            $location.path('/pandian')
+        }
+    }
+]
+
+listCtrl.$injector = ['$rootScope', '$scope', '$location'];

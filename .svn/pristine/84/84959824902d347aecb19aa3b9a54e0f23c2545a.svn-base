@@ -1,0 +1,11 @@
+{
+    "name": "lqx_sao",
+    "version": "1.0",
+    "sqls": {
+        "create_good_list": "CREATE TABLE `GOODS_LIST` (`goods_sn`  varchar(50) NOT NULL ,`sku_sn`  char(50) NOT NULL ,`goods_name`  varchar(255) NOT NULL ,PRIMARY KEY (sku_sn))"
+    },
+    "otherSqls": {
+        "insert_good_data": "INSERT INTO `GOODS_LIST` (`goods_sn`, `sku_sn`, `goods_name`) VALUES ",
+        "search_good": "SELECT * FROM `GOODS_LIST` where sku_sn = "
+    }
+}

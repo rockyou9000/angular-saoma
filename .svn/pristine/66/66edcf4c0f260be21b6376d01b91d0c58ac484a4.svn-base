@@ -1,0 +1,16 @@
+var configCtrl = [
+    '$rootScope', '$scope', '$location',
+    function($rootScope, $scope, $location) {
+        $scope.BA_ID = '000000';
+        $scope.BA_NAME = '管理员';
+        $scope.default_gun = '';
+
+        $scope.page_back = function() {
+            window.history.go(-1);
+        };
+        $scope.clear = function() {
+            window.localStorage.clear()
+            alert('缓存已清除!')
+        }
+    }
+]
