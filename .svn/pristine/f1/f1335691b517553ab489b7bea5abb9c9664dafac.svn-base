@@ -1,0 +1,369 @@
+var listCtrl = [
+    '$rootScope', '$scope', '$location', '$http', '$q', '$timeout', 'ngDialog',
+    function($rootScope, $scope, $location, $http, $q, $timeout, ngDialog) {
+
+        // 盘点状态:1.未确认 2.未上传 3.已上传
+        $scope.PAN_STATUS_CODE = 1;
+        //盘点差异:1.未拉取 2.已拉取
+        $scope.PAN_DIFF_CODE = 1;
+        $scope.PAPER_NUM = 5153313513;
+        $scope.PAN_PERSON = '周骏';
+        $scope.PAN_ID = 6052037;
+        $scope.PAN_SHOP = '中山公园龙之梦';
+        $scope.PAN_DATE = '2016/11/30';
+        $scope.GOODS_SUM_PRICE = '5215.00';
+        $scope.GOODS_NUM = '15';
+        $scope.pan_filter = '';
+        $scope.sao_flag = 1;
+        $scope.sao_num = '';
+        $scope.sao_type = '扫一扫';
+        $scope.selAll = false;
+
+        $scope.$watch('selAll', function(newValue) {
+
+            $timeout(function() {
+                if (newValue == true) {
+                    //any code in here will automatically have an apply run afterwards
+                    for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                        if ($scope.good_data[i].SEL == false) {
+                            $scope.good_data[i].SEL = true
+                        }
+                    }
+                } else {
+                    for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                        if ($scope.good_data[i].SEL == true) {
+                            $scope.good_data[i].SEL = false
+                        }
+                    }
+                }
+
+            });
+
+
+        })
+
+        //筛选器
+        $scope.byFilterPan = function(obj) {
+
+            var str1 = String(obj.SKU)
+            var str2 = String(obj.NAME)
+
+            if (str1.indexOf($scope.pan_filter) !== -1) {
+                return true
+            } else if (str2.indexOf($scope.pan_filter) !== -1) {
+                return true
+            } else {
+                return false
+            }
+
+        }
+
+
+        $scope.good_data = [{
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 2
+            }, {
+                SEL: false,
+                SKU: 35631351,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 5
+            }, {
+                SEL: true,
+                SKU: 61351323,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 6151313215,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 2
+            }, {
+                SEL: true,
+                SKU: 55156164323,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 2,
+                ACCOUNT_DIFF: 3
+            }, {
+                SEL: false,
+                SKU: 231351,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 5
+            }, {
+                SEL: false,
+                SKU: 56131351,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 3,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 3135132153,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 0
+            },
+            {
+                SEL: false,
+                SKU: 6640000546213,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 0
+            }
+        ]
+
+        //扫一扫功能
+        $scope.saoMa = function(databaseName) {
+
+            function select(value) {
+                var ret = lqx_app.db.selectSqlSync({
+                    name: databaseName,
+                    sql: 'SELECT * FROM `goods_list` where sku_sn = "' + value + '"'
+                });
+                return ret
+            }
+
+            lqx_app.scanner.openScanner({
+                saveToAlbum: false
+            }, function(ret, err) {
+                if (ret.eventType != 'show') { //禁用掉show回调,否则会有两次回调方法
+
+                    if (!ret.content) return; //扫码取消 退出
+
+                    $scope.sao_flag = 1; //表示是否在列表内找到相同商品
+
+                    alert(JSON.stringify(ret));
+
+                    for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                        if ($scope.good_data[i].SKU == ret.content) {
+                            $scope.good_data[i].NUM++;
+                            $scope.sao_flag = 0;
+                        }
+                    }
+
+
+                    // 扫码返回
+                    // {content:6959383656565, eventType:success}
+
+                    // 数据库查询返回
+                    // {data:[{sku_sn:6959383656565,goods_name:芦荟胶,goods_sn:c.c.f.11.25}],status:true}
+
+                    // 盘点单内没有找到相同商品,需要插入新数据
+                    if ($scope.sao_flag) {
+                        var sao_good_data = select(ret.content)
+
+                        alert(JSON.stringify(sao_good_data))
+
+                        var new_list_item = {
+                            SEL: false,
+                            SKU: sao_good_data.data[0].sku_sn,
+                            NAME: sao_good_data.data[0].goods_name,
+                            PRICE: sao_good_data.data[0].shop_price,
+                            NUM: 1,
+                            ACCOUNT_NUM: 5,
+                            ACCOUNT_DIFF: 3
+                        }
+                        $scope.good_data.unshift(new_list_item);
+                    }
+
+                    $scope.$apply() //手动刷新视图
+
+                    $scope.sao_flag = 1;
+                }
+            });
+        }
+
+
+
+        //增加一条商品记录
+        $scope.addOne = function() {
+            window_id = ngDialog.open({
+                className: 'ngdialog-theme-default',
+                closeByDocument: false,
+                trapFocus: false,
+                showClose: false,
+                disableAnimation: true,
+                scope: $scope,
+                template: './html/dialog_new_good.html',
+                controller: ['$scope', function($scope) {
+
+                    $rootScope.selectItem = {};
+                    $scope.GOODS_SN = "0101";
+                    $scope.GOODS_PRICE = "0202";
+                    $scope.PAN_NUM = "2";
+                    $scope.flag = 1; //判断是否找到相同商品
+                    $scope.search_tab = 1; //判断输入值是否是搜索关键词
+
+                    //标题
+                    $scope.title = "添加商品";
+                    $scope.searchGoods = function(databaseName) {
+                        // 模糊搜索名字
+                        // "SELECT * FROM goods_list WHERE goods_name LIKE '%SASA%'"
+                        // 数据库查询返回
+                        // {data:[{sku_sn:6959383656565,goods_name:芦荟胶,goods_sn:c.c.f.11.25},{sku_sn:6959383656565,goods_name:芦荟胶,goods_sn:c.c.f.11.25}......],status:true}
+
+                        var sql_str = '';
+                        alert(databaseName)
+                        alert($rootScope.selectItem['goods_name'])
+
+                        // if ($rootScope.selectItem) {
+                        //     alert(1)
+                        // sql_str = " WHERE goods_name LIKE '%" + $rootScope.selectItem['goods_name'] + "%'"
+                        // }
+
+
+                        ' WHERE goods_name LIKE ' % " + $rootScope.selectItem['goods_name'] + " % ''
+
+
+
+
+                        var ret = lqx_app.db.executeSqlSync({
+                            name: databaseName,
+                            sql: "SELECT * FROM `goods_list`"
+                        });
+
+                        if (ret.status) {
+                            alert("正确" + JSON.stringify(ret))
+                        } else {
+                            alert("错误" + JSON.stringify(ret))
+                        }
+
+                        if (!ret) {
+                            alert('没有符合条件的商品!')
+                            return;
+                        } else {
+                            $rootScope.search_list = ret.data;
+
+                            // 打开商品列表
+                            window_good = ngDialog.open({
+                                closeByDocument: true,
+                                trapFocus: false,
+                                template: './html/dialog_sel_good.html',
+                                disableAnimation: true,
+                                showClose: false,
+                                scope: $scope,
+                                controller: ['$scope', '$http', '$q', '$timeout', function($scope, $http, $q, $timeout) {
+
+                                    $rootScope.selectItem = '';
+                                    // $scope.list = '';
+
+                                    // $http({
+                                    //     method: 'GET',
+                                    //     url: './install/goods.json'
+                                    // }).success(function(response) {
+                                    //     if (!response.data) {
+                                    //         alert('未搜索到相关商品')
+                                    //     }
+                                    //     $timeout(function() {
+                                    //         $scope.list = response.data;
+                                    //     })
+
+                                    // }).error(function() {
+                                    //     alert('数据读取失败 !')
+                                    // })
+
+
+                                    $scope.getItem = function(index) {
+                                        $rootScope.selectItem = $rootScope.search_list[index];
+                                        $scope.search_tab = 0;
+                                        // alert($rootScope.selectItem)
+                                        $timeout(function() {
+                                            $scope.closeThisDialog()
+                                        }, 300)
+
+                                    }
+                                }]
+                            });
+                        }
+                    }
+
+                    $scope.modal_save = function() {
+
+                        if ($scope.search_tab) {
+                            alert('未在列表内选择商品!')
+                            return;
+                        }
+
+                        $scope.sao_flag = 1; //表示是否在列表内找到相同商品
+
+                        //用户输入监测
+                        if (!$rootScope.selectItem) {
+                            alert('未选择任何商品 !')
+                        }
+
+                        for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                            if ($scope.good_data[i].SKU == $rootScope.selectItem.sku_sn) {
+                                $scope.good_data[i].NUM++;
+                                $scope.sao_flag = 0;
+                            }
+                        }
+
+                        if ($scope.sao_flag) {
+                            $timeout(function() {
+                                var new_list_item = {
+                                    SEL: false,
+                                    SKU: $rootScope.selectItem.sku_sn,
+                                    NAME: $rootScope.selectItem.goods_name,
+                                    NUM: 1,
+                                    ACCOUNT_NUM: 5,
+                                    ACCOUNT_DIFF: 3
+                                }
+                                $scope.good_data.unshift(new_list_item);
+                                // $scope.$apply() //手动刷新视图
+                            })
+                        }
+
+                        ngDialog.close(window_id);
+                        $scope.sao_flag = 1;
+
+                    }
+                    $scope.modal_close = function() {
+                        ngDialog.close(window_id)
+                    }
+                }]
+            });
+        }
+
+        //删除所选记录
+        $scope.deleteSel = function() {
+            var length = $scope.good_data.length - 1;
+            for (var i = length; i >= 0; i--) {
+                if ($scope.good_data[i].SEL == undefined) break; //删除数组项导致遍历循环次数变多,所以当遍历完了退出所有循环
+                if ($scope.good_data[i].SEL == true) {
+                    $scope.good_data.splice(i, 1)
+                }
+            }
+        }
+
+        //上传盘点数据
+        $scope.upLoadData = function() {
+
+        }
+
+        //拉取差异
+        $scope.getDiff = function() {
+
+        }
+
+        //返回到上一页
+        $scope.closeWin = function() {
+            $location.path('/pandian')
+        }
+    }
+]
+
+listCtrl.$injector = ['$rootScope', '$scope', '$location', '$http', '$q', '$timeout', 'ngDialog'];
