@@ -202,18 +202,23 @@ var listCtrl = [
                 controller: ['$scope', '$timeout', function($scope, $timeout) {
 
                     $scope.selectItem = '';
-                    $scope.GOODS_SN = "0101";
-                    $scope.GOODS_PRICE = "0202";
-                    $scope.PAN_NUM = "2";
+                    $scope.GOODS_SN = "";
+                    $scope.GOODS_PRICE = "";
+                    $scope.PAN_NUM = "";
                     $scope.flag = 1; //判断是否找到相同商品
-                    $scope.search_tab = 1; //判断输入值是否是搜索关键词
+                    $scope.selectItemObject = ''
+                        // $rootScope.search_tab = 1; //判断输入值是否是搜索关键词
 
                     //标题
                     $scope.title = "添加商品";
 
                     $scope.$on('getItemSelected', function(event, data) {
-                        alert(JSON.stringify(data));
+                        // alert(JSON.stringify(data));
+                        $scope.selectItemObject = data;
                         $scope.selectItem = data['goods_name'];
+                        $scope.GOODS_SN = data['sku_sn'];
+                        $scope.GOODS_PRICE = data['shop_price'];
+                        $scope.PAN_NUM = 1;
                     })
 
                     $scope.searchGoods = function(databaseName) {
@@ -224,6 +229,9 @@ var listCtrl = [
 
                         if ($scope.selectItem == '') {
                             alert('请输入搜索关键字!')
+                            $scope.GOODS_SN = "";
+                            $scope.GOODS_PRICE = "";
+                            $scope.PAN_NUM = "";
                             return;
                         }
 
@@ -284,7 +292,7 @@ var listCtrl = [
 
                                     $scope.getItem = function(index) {
                                         $scope.$emit('getItemSelected', $rootScope.search_list[index]);
-                                        $scope.search_tab = 0;
+                                        // $scope.search_tab = 0;
                                         // alert($rootScope.selectItem)
                                         $timeout(function() {
                                             $scope.closeThisDialog()
@@ -299,31 +307,27 @@ var listCtrl = [
 
                     $scope.modal_save = function() {
 
-                        if ($scope.search_tab) {
-                            alert('未在列表内选择商品!')
+                        if ($scope.selectItemObject == '') {
+                            alert('未在列表内选择商品 !')
                             return;
                         }
 
-                        $scope.sao_flag = 1; //表示是否在列表内找到相同商品
-
-                        //用户输入监测
-                        if (!$rootScope.selectItem) {
-                            alert('未选择任何商品 !')
-                        }
+                        var sao_flag = 1; //表示是否在列表内找到相同商品
 
                         for (var i = 0, length = $scope.good_data.length; i < length; i++) {
-                            if ($scope.good_data[i].SKU == $rootScope.selectItem.sku_sn) {
+                            if ($scope.good_data[i].SKU == $scope.selectItemObject.sku_sn) {
                                 $scope.good_data[i].NUM++;
-                                $scope.sao_flag = 0;
+                                sao_flag = 0;
                             }
                         }
 
-                        if ($scope.sao_flag) {
+                        if (sao_flag) {
                             $timeout(function() {
                                 var new_list_item = {
                                     SEL: false,
-                                    SKU: $rootScope.selectItem.sku_sn,
-                                    NAME: $rootScope.selectItem.goods_name,
+                                    SKU: $scope.selectItemObject.sku_sn,
+                                    NAME: $scope.selectItemObject.goods_name,
+                                    PRICE: $scope.selectItemObject.shop_price,
                                     NUM: 1,
                                     ACCOUNT_NUM: 5,
                                     ACCOUNT_DIFF: 3
@@ -334,7 +338,7 @@ var listCtrl = [
                         }
 
                         ngDialog.close(window_id);
-                        $scope.sao_flag = 1;
+                        var sao_flag = 1;
 
                     }
                     $scope.modal_close = function() {
