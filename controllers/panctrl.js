@@ -2,6 +2,23 @@ var panCtrl = [
     '$rootScope', '$scope', '$location',
     function($rootScope, $scope, $location) {
 
+        Array.prototype.slice.apply(document.querySelectorAll('.modal-txt'))
+            .forEach(function(el) {
+                TinyDatePicker(el, {
+                    format: function(date) {
+                        return date.toLocaleDateString();
+                    },
+                    mode: 'dp-modal',
+                    months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    days: ['日', '一', '二', '三', '四', '五', '六'],
+                    today: '今天',
+                    clear: '清空',
+                    close: '关闭'
+                        // min: '10/1/2016',
+                        // max: '10/22/2016'
+                });
+            })
+
         $scope.search_date_start = "";
         $scope.search_date_end = "";
         $scope.search_id = "";
