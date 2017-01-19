@@ -1,6 +1,7 @@
 var indexCtrl = [
     '$rootScope', '$scope', '$location', '$http', '$q', '$timeout', 'ngDialog',
     function($rootScope, $scope, $location, $http, $q, $timeout, ngDialog) {
+
         $scope.pan_set = true;
         $scope.showModal = false;
 
@@ -12,6 +13,27 @@ var indexCtrl = [
         $rootScope.selectShop = '';
         $scope.PAN_DATE = '';
 
+        $scope.openModal = function() {
+            $scope.showModal = true;
+            $timeout(function() {
+                TinyDatePicker(document.querySelector('.modal-txt'), {
+
+                    format: function(date) {
+                        return date.toLocaleDateString();
+                    },
+                    mode: 'dp-modal',
+                    months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    days: ['日', '一', '二', '三', '四', '五', '六'],
+                    today: '今天',
+                    clear: '清空',
+                    close: '关闭'
+                        // min: '10/1/2016',
+                        // max: '10/22/2016'
+
+                });
+            })
+
+        }
 
         $scope.closeMain = function() {
             $location.path('/');

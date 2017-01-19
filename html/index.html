@@ -12,7 +12,7 @@
         </div>
 
         <div class="body">
-            <div class="half" ng-click="showModal = true">
+            <div class="half" ng-click="openModal()">
                 <span>新增盘点单</span>
             </div>
             <div class="half">
@@ -32,7 +32,7 @@
                         <div class="modal-body">
                             <div class="modal-inner">
                                 <label>单据编号<input type="text" ng-model="PAPER_NUM" readonly></label>
-                                <label>盘点日期<input type="date" ng-model="PAN_DATE"></label>
+                                <label>盘点日期<input type="text" class="modal-txt" tabindex="400" ng-model="PAN_DATE"></label>
                                 <label>盘点店铺<input type="text" ng-model="selectShop['shop_name']" readonly><i  class="search_image" ng-click="searchShops()"><img src="./image/search.png" alt=""></i></label>
                             </div>
                         </div>
