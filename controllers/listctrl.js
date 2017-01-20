@@ -16,8 +16,8 @@ var listCtrl = [
 
         $scope.pan_filter = '';
         $scope.sao_flag = 1;
-        $scope.sao_type = '扫一扫';
-        $scope.sao_gun = false;
+        $scope.sao_type = '扫一扫'; //扫码类型
+        $scope.sao_gun = false; //是否启用扫码枪
         $scope.selAll = false;
 
         $scope.$watch('selAll', function(newValue) {
