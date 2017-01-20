@@ -13,10 +13,11 @@ var listCtrl = [
         $scope.PAN_DATE = '2016/11/30';
         $scope.GOODS_SUM_PRICE = '5215.00';
         $scope.GOODS_NUM = '15';
+
         $scope.pan_filter = '';
         $scope.sao_flag = 1;
-        $scope.sao_num = '';
         $scope.sao_type = '扫一扫';
+        $scope.sao_gun = false;
         $scope.selAll = false;
 
         $scope.$watch('selAll', function(newValue) {
@@ -40,6 +41,17 @@ var listCtrl = [
             });
 
 
+        })
+
+        $scope.$watch('sao_gun', function(newValue) {
+            switch (newValue) {
+                case true:
+                    $scope.sao_type = '扫码枪';
+                    break;
+                case false:
+                    $scope.sao_type = '扫一扫';
+                    break;
+            }
         })
 
         //筛选器
@@ -129,62 +141,65 @@ var listCtrl = [
         //扫一扫功能
         $scope.saoMa = function(databaseName) {
 
-            function select(value) {
-                var ret = lqx_app.db.selectSqlSync({
-                    name: databaseName,
-                    sql: 'SELECT * FROM `goods_list` where sku_sn = "' + value + '"'
-                });
-                return ret
-            }
+            if ($scope.sao_type == "扫一扫") {
 
-            lqx_app.scanner.openScanner({
-                saveToAlbum: false
-            }, function(ret, err) {
-                if (ret.eventType != 'show') { //禁用掉show回调,否则会有两次回调方法
-
-                    if (!ret.content) return; //扫码取消 退出
-
-                    $scope.sao_flag = 1; //表示是否在列表内找到相同商品
-
-                    alert(JSON.stringify(ret));
-
-                    for (var i = 0, length = $scope.good_data.length; i < length; i++) {
-                        if ($scope.good_data[i].SKU == ret.content) {
-                            $scope.good_data[i].NUM++;
-                            $scope.sao_flag = 0;
-                        }
-                    }
-
-
-                    // 扫码返回
-                    // {content:6959383656565, eventType:success}
-
-                    // 数据库查询返回
-                    // {data:[{sku_sn:6959383656565,goods_name:芦荟胶,goods_sn:c.c.f.11.25}],status:true}
-
-                    // 盘点单内没有找到相同商品,需要插入新数据
-                    if ($scope.sao_flag) {
-                        var sao_good_data = select(ret.content)
-
-                        alert(JSON.stringify(sao_good_data))
-
-                        var new_list_item = {
-                            SEL: false,
-                            SKU: sao_good_data.data[0].sku_sn,
-                            NAME: sao_good_data.data[0].goods_name,
-                            PRICE: sao_good_data.data[0].shop_price,
-                            NUM: 1,
-                            ACCOUNT_NUM: 5,
-                            ACCOUNT_DIFF: 3
-                        }
-                        $scope.good_data.unshift(new_list_item);
-                    }
-
-                    $scope.$apply() //手动刷新视图
-
-                    $scope.sao_flag = 1;
+                function select(value) {
+                    var ret = lqx_app.db.selectSqlSync({
+                        name: databaseName,
+                        sql: 'SELECT * FROM `goods_list` where sku_sn = "' + value + '"'
+                    });
+                    return ret
                 }
-            });
+
+                lqx_app.scanner.openScanner({
+                    saveToAlbum: false
+                }, function(ret, err) {
+                    if (ret.eventType != 'show') { //禁用掉show回调,否则会有两次回调方法
+
+                        if (!ret.content) return; //扫码取消 退出
+
+                        $scope.sao_flag = 1; //表示是否在列表内找到相同商品
+
+                        alert(JSON.stringify(ret));
+
+                        for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                            if ($scope.good_data[i].SKU == ret.content) {
+                                $scope.good_data[i].NUM++;
+                                $scope.sao_flag = 0;
+                            }
+                        }
+
+
+                        // 扫码返回
+                        // {content:6959383656565, eventType:success}
+
+                        // 数据库查询返回
+                        // {data:[{sku_sn:6959383656565,goods_name:芦荟胶,goods_sn:c.c.f.11.25}],status:true}
+
+                        // 盘点单内没有找到相同商品,需要插入新数据
+                        if ($scope.sao_flag) {
+                            var sao_good_data = select(ret.content)
+
+                            alert(JSON.stringify(sao_good_data))
+
+                            var new_list_item = {
+                                SEL: false,
+                                SKU: sao_good_data.data[0].sku_sn,
+                                NAME: sao_good_data.data[0].goods_name,
+                                PRICE: sao_good_data.data[0].shop_price,
+                                NUM: 1,
+                                ACCOUNT_NUM: 5,
+                                ACCOUNT_DIFF: 3
+                            }
+                            $scope.good_data.unshift(new_list_item);
+                        }
+
+                        $scope.$apply() //手动刷新视图
+
+                        $scope.sao_flag = 1;
+                    }
+                });
+            }
         }
 
 
