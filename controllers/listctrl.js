@@ -18,7 +18,80 @@ var listCtrl = [
         $scope.sao_flag = 1;
         $scope.sao_type = '扫一扫'; //扫码类型
         $scope.sao_gun = false; //是否启用扫码枪
-        $scope.selAll = false;
+        $scope.selAll = false; //全选功能
+
+        $scope.saoma_gun_input = '';
+        $scope.saomiaoStart = 0;
+        $scope.saomiaoEnd = 0;
+        $scope.saomiaoFlag = false;
+
+        $scope.good_data = [{
+                SEL: false,
+                SKU: 691110011062,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 2
+            }, {
+                SEL: false,
+                SKU: 35631351,
+                NAME: '山茶花润肤油',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 5
+            }, {
+                SEL: true,
+                SKU: 61351323,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 6151313215,
+                NAME: '海藻精华液',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 2
+            }, {
+                SEL: true,
+                SKU: 55156164323,
+                NAME: '山茶花润肤油',
+                NUM: 3,
+                ACCOUNT_NUM: 2,
+                ACCOUNT_DIFF: 3
+            }, {
+                SEL: false,
+                SKU: 231351,
+                NAME: '海藻精华液',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 5
+            }, {
+                SEL: false,
+                SKU: 56131351,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 3,
+                ACCOUNT_DIFF: -2
+            }, {
+                SEL: false,
+                SKU: 3135132153,
+                NAME: '山茶花润肤油',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 0
+            },
+            {
+                SEL: false,
+                SKU: 6640000546213,
+                NAME: '红石榴活颜焕彩',
+                NUM: 3,
+                ACCOUNT_NUM: 1,
+                ACCOUNT_DIFF: 0
+            }
+        ]
+
 
         $scope.$watch('selAll', function(newValue) {
 
@@ -70,86 +143,48 @@ var listCtrl = [
 
         }
 
+        //扫码枪监测
+        $rootScope.watchInput = function(databaseName) {
 
-        $scope.good_data = [{
-                SEL: false,
-                SKU: 691110011062,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: 2
-            }, {
-                SEL: false,
-                SKU: 35631351,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: 5
-            }, {
-                SEL: true,
-                SKU: 61351323,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: -2
-            }, {
-                SEL: false,
-                SKU: 6151313215,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: 2
-            }, {
-                SEL: true,
-                SKU: 55156164323,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 2,
-                ACCOUNT_DIFF: 3
-            }, {
-                SEL: false,
-                SKU: 231351,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: 5
-            }, {
-                SEL: false,
-                SKU: 56131351,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 3,
-                ACCOUNT_DIFF: -2
-            }, {
-                SEL: false,
-                SKU: 3135132153,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: 0
-            },
-            {
-                SEL: false,
-                SKU: 6640000546213,
-                NAME: '红石榴活颜焕彩',
-                NUM: 3,
-                ACCOUNT_NUM: 1,
-                ACCOUNT_DIFF: 0
-            }
-        ]
+            if ($scope.saomiaoFlag) return; //防止过快输入扫描码
+
+            if ($scope.sao_type !== '扫码枪') return;
+
+            $scope.saomiaoFlag = true;
+
+            $scope.saomiaoStart = +new Date();
+
+
+            var saomaTimeout = setTimeout(function() {
+                $scope.saomiaoEnd = +new Date();
+                var input_time = $scope.saomiaoEnd - $scope.saomiaoStart;
+
+                //3位以上且300毫秒以内认为是扫描枪录入
+                if ($scope.saoma_gun_input.length > 6 && input_time < 800) {
+                    $scope.saoMa(databaseName, $scope.saoma_gun_input);
+                    $timeout(function() {
+                        $scope.saomiaoFlag = false;
+                        $scope.saoma_gun_input = '';
+                    })
+
+                }
+            }, 500)
+
+
+        }
 
         //扫一扫功能
-        $scope.saoMa = function(databaseName) {
+        $scope.saoMa = function(databaseName, saomiaoInput) {
+
+            function select(value) {
+                var ret = lqx_app.db.selectSqlSync({
+                    name: databaseName,
+                    sql: 'SELECT * FROM `goods_list` where sku_sn = "' + value + '"'
+                });
+                return ret
+            }
 
             if ($scope.sao_type == "扫一扫") {
-
-                function select(value) {
-                    var ret = lqx_app.db.selectSqlSync({
-                        name: databaseName,
-                        sql: 'SELECT * FROM `goods_list` where sku_sn = "' + value + '"'
-                    });
-                    return ret
-                }
 
                 lqx_app.scanner.openScanner({
                     saveToAlbum: false
@@ -199,6 +234,41 @@ var listCtrl = [
                         $scope.sao_flag = 1;
                     }
                 });
+            } else if ($scope.sao_type == "扫码枪") {
+                $scope.sao_flag = 1; //表示是否在列表内找到相同商品
+
+                for (var i = 0, length = $scope.good_data.length; i < length; i++) {
+                    if ($scope.good_data[i].SKU == saomiaoInput) {
+                        $scope.good_data[i].NUM++;
+                        $scope.sao_flag = 0;
+                    }
+                }
+
+                // 数据库查询返回
+                // {data:[{sku_sn:6959383656565,goods_name:芦荟胶,goods_sn:c.c.f.11.25}],status:true}
+
+                // 盘点单内没有找到相同商品,需要插入新数据
+                if ($scope.sao_flag) {
+
+                    var sao_good_data = select(saomiaoInput)
+
+                    alert(JSON.stringify(sao_good_data))
+
+                    var new_list_item = {
+                        SEL: false,
+                        SKU: sao_good_data.data[0].sku_sn,
+                        NAME: sao_good_data.data[0].goods_name,
+                        PRICE: sao_good_data.data[0].shop_price,
+                        NUM: 1,
+                        ACCOUNT_NUM: 5,
+                        ACCOUNT_DIFF: 3
+                    }
+                    $scope.good_data.unshift(new_list_item);
+                }
+
+                $scope.$apply() //手动刷新视图
+
+                $scope.sao_flag = 1;
             }
         }
 
