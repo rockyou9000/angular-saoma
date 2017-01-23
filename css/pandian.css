@@ -184,9 +184,10 @@
 }
 
 .input_show {
-    width: 150px;
+    width: 130px;
     /*height: 22px;*/
     border: 1px solid #cecece;
+    margin-left: 10px;
 }
 
 

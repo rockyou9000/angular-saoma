@@ -1,0 +1,54 @@
+<!-- main -->
+<div id="app">
+    <div id="header">
+        <i ng-click="closeWin()">关闭</i>
+        <h2>盘点单详情</h2>
+    </div>
+    <div id="wrap" class="wrapbg_for_list">
+        <div id="pan_detail_wrap">
+            <div class="detail_head">
+                <h3>单据编号:{{PAPER_NUM}}</h3>
+                <p><span class="list_l">单据人工号:{{PAN_ID}}</span><span>盘点日期:{{PAN_DATE}}</span></p>
+                <p><span class="list_l">盘点人姓名:{{PAN_PERSON}}</span><span>盘点店铺:{{PAN_SHOP}}</span></p>
+                <p><span class="list_l">商品总价:{{GOODS_SUM_PRICE}}</span><span>实盘总数:{{GOODS_NUM}}</span></p>
+                <p class="filter_input">定位:<input type="text" ng-model="pan_filter">
+                    <!--<button>查询</button>--></p>
+                <p>
+                    <span>扫码类型 :<i class="sao_type_sys" ng-click="saoMa('lqx_goods')">{{sao_type}}</i></span> &nbsp;&nbsp;&nbsp;扫码枪开启 : <input type="checkbox" ng-model="sao_gun">
+                    <input ng-show="sao_gun" ng-model="saoma_gun_input" ng-change="watchInput('lqx_goods')" type="text" class="input_show">
+                </p>
+
+            </div>
+            <div class="detail_body">
+                <h3>商品明细</h3>
+                <ul class="edit_btn clearfix">
+                    <li ng-click="addOne()">添加</li>
+                    <li ng-click="deleteSel()">删除</li>
+                    <li ng-click="upLoadData()">确认并上传</li>
+                    <li ng-click="getDiff()">拉取差异</li>
+                </ul>
+            </div>
+            <div class="detail_list">
+                <table>
+                    <thead>
+                        <th>&nbsp;<input type="checkbox" ng-model="selAll">&nbsp;</th>
+                        <th>条码/品名</th>
+                        <th>实盘数</th>
+                        <th>账面数</th>
+                        <th>盈亏数</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in good_data | filter:byFilterPan">
+                            <td class="list_select"><input type="checkbox" ng-model="item.SEL"></td>
+                            <td>{{item.SKU}}<br>{{item.NAME}}</td>
+                            <td>{{item.NUM}}</td>
+                            <td>{{item.ACCOUNT_NUM}}</td>
+                            <td>{{item.ACCOUNT_DIFF}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- main -->

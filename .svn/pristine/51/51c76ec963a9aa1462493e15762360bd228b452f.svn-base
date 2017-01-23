@@ -1,0 +1,51 @@
+<div>
+    <div id="header">
+        <i ng-click="closeMain()">退出</i>
+        <h2>门店盘点工具</h2>
+    </div>
+    <div id="wrap">
+
+        <div class="head clearfix">
+            <h3>门店库存盘点<em ng-if="pan_set" ng-click="showConfig()">设置</em></h3>
+            <label class="ba_detail">工号<span>{{BA_ID}}</span></label>
+            <label class="ba_detail">姓名<span>{{BA_NAME}}</span></label>
+        </div>
+
+        <div class="body">
+            <div class="half" ng-click="openModal()">
+                <span>新增盘点单</span>
+            </div>
+            <div class="half">
+                <span ng-click="showPan()">查看盘点单</span>
+            </div>
+        </div>
+
+        <div ng-if="showModal">
+            <div class="modal-mask">
+                <div class="modal-wrapper">
+                    <div class="modal-container">
+
+                        <div class="modal-header">
+                            <h3>门店盘点单</h3>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="modal-inner">
+                                <label>单据编号<input type="text" ng-model="PAPER_NUM" readonly></label>
+                                <label>盘点日期<input type="text" class="modal-txt" tabindex="400" ng-model="PAN_DATE"></label>
+                                <label>盘点店铺<input type="text" ng-model="selectShop['shop_name']" readonly><i  class="search_image" ng-click="searchShops()"><img src="./image/search.png" alt=""></i></label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <slot name="footer">
+                                <button class="modal-save" ng-click="modal_save()">保存</button>
+                                <button class="modal-close" ng-click="modal_close()">关闭</button>
+                            </slot>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

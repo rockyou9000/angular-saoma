@@ -1,0 +1,25 @@
+<!-- main -->
+<div id="app">
+    <div id="header">
+        <i ng-click="closeWin()">返回</i>
+        <h2>查看盘点单</h2>
+    </div>
+    <div id="wrap" class="wrapbg_for_list">
+        <div id="pan_list_wrap">
+            <div class="head clearfix">
+                <label class="search_input">盘点日期: <input type="text" class="modal-txt date_sel" tabindex="400" ng-model="search_date_start"/> &nbsp;-&nbsp;<input type="text" class="modal-txt date_sel" tabindex="400" ng-model="search_date_end"/></label>
+                <label class="search_input">单据编号: <input type="text" class="paper_num" ng-model="search_id"><!--<button type="button">查询</button>--></label>
+            </div>
+            <div class="list_body">
+                <ul class="pan_list">
+                    <li class="list_item" ng-repeat="item in data | filter: byFilterList" ng-click="goDetail()">
+                        <p><span class="list_l">单据编号:{{item.PAPER_NUM}}</span><span>盘点人:{{item.PAN_ID}} {{item.PAN_PERSON}}</span></p>
+                        <p><span class="list_l">盘点店铺:{{item.PAN_SHOP}}</span><span>盘点状态:{{item.PAN_STATUS}}</span></p>
+                        <p><span class="list_l">盘点日期:{{item.PAN_DATE}}</span><span>盘点差异:{{item.PAN_DIFF}}</span></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- main -->
