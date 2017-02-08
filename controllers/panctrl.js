@@ -79,54 +79,54 @@ var panCtrl = [
                     }
                 }
             }
-
-
             return filter_id(obj);
-
         }
 
+        $scope.data = $rootScope.stork_list
 
-        $scope.data = [{
-            PAPER_NUM: 515330001,
-            PAN_PERSON: '周骏',
-            PAN_ID: 6052037,
-            PAN_SHOP: '中山公园龙之梦',
-            PAN_STATUS: '已上传',
-            PAN_DATE: '2016/2/30',
-            PAN_DIFF: '未拉取'
-        }, {
-            PAPER_NUM: 5153123110,
-            PAN_PERSON: '周二骏',
-            PAN_ID: 6052037,
-            PAN_SHOP: '虹口龙之梦',
-            PAN_STATUS: '未确认',
-            PAN_DATE: '2013/3/30',
-            PAN_DIFF: '已拉取'
-        }, {
-            PAPER_NUM: 12332313539,
-            PAN_PERSON: '大黄',
-            PAN_ID: 6052037,
-            PAN_SHOP: '中山公园龙之梦',
-            PAN_STATUS: '未上传',
-            PAN_DATE: '2016/5/30',
-            PAN_DIFF: '未拉取'
-        }, {
-            PAPER_NUM: 12332313642,
-            PAN_PERSON: '包子',
-            PAN_ID: 6052037,
-            PAN_SHOP: '中山公园龙之梦',
-            PAN_STATUS: '未上传',
-            PAN_DATE: '2016/6/30',
-            PAN_DIFF: '未拉取'
-        }, {
-            PAPER_NUM: 12332313888,
-            PAN_PERSON: '狗不理包子',
-            PAN_ID: 6052037,
-            PAN_SHOP: '中山公园龙之梦',
-            PAN_STATUS: '未上传',
-            PAN_DATE: '2016/7/30',
-            PAN_DIFF: '未拉取'
-        }];
+        // alert(JSON.stringify($scope.data))
+
+        // $scope.data = [{
+        //     PAPER_NUM: 515330001,
+        //     PAN_PERSON: '周骏',
+        //     PAN_ID: 6052037,
+        //     PAN_SHOP: '中山公园龙之梦',
+        //     PAN_STATUS: '已上传',
+        //     PAN_DATE: '2016/2/30',
+        //     PAN_DIFF: '未拉取'
+        // }, {
+        //     PAPER_NUM: 5153123110,
+        //     PAN_PERSON: '周二骏',
+        //     PAN_ID: 6052037,
+        //     PAN_SHOP: '虹口龙之梦',
+        //     PAN_STATUS: '未确认',
+        //     PAN_DATE: '2013/3/30',
+        //     PAN_DIFF: '已拉取'
+        // }, {
+        //     PAPER_NUM: 12332313539,
+        //     PAN_PERSON: '大黄',
+        //     PAN_ID: 6052037,
+        //     PAN_SHOP: '中山公园龙之梦',
+        //     PAN_STATUS: '未上传',
+        //     PAN_DATE: '2016/5/30',
+        //     PAN_DIFF: '未拉取'
+        // }, {
+        //     PAPER_NUM: 12332313642,
+        //     PAN_PERSON: '包子',
+        //     PAN_ID: 6052037,
+        //     PAN_SHOP: '中山公园龙之梦',
+        //     PAN_STATUS: '未上传',
+        //     PAN_DATE: '2016/6/30',
+        //     PAN_DIFF: '未拉取'
+        // }, {
+        //     PAPER_NUM: 12332313888,
+        //     PAN_PERSON: '狗不理包子',
+        //     PAN_ID: 6052037,
+        //     PAN_SHOP: '中山公园龙之梦',
+        //     PAN_STATUS: '未上传',
+        //     PAN_DATE: '2016/7/30',
+        //     PAN_DIFF: '未拉取'
+        // }];
 
 
     }

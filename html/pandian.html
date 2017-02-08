@@ -13,9 +13,9 @@
             <div class="list_body">
                 <ul class="pan_list">
                     <li class="list_item" ng-repeat="item in data | filter: byFilterList" ng-click="goDetail()">
-                        <p><span class="list_l">单据编号:{{item.PAPER_NUM}}</span><span>盘点人:{{item.PAN_ID}} {{item.PAN_PERSON}}</span></p>
-                        <p><span class="list_l">盘点店铺:{{item.PAN_SHOP}}</span><span>盘点状态:{{item.PAN_STATUS}}</span></p>
-                        <p><span class="list_l">盘点日期:{{item.PAN_DATE}}</span><span>盘点差异:{{item.PAN_DIFF}}</span></p>
+                        <p><span class="list_l">单据编号:{{item.record_code}}</span><span>盘点人:{{item.user_code}} {{item.PAN_PERSON}}</span></p>
+                        <p><span class="list_l">盘点店铺:{{item.store_code}}</span><span>盘点状态:{{item.is_upload}}</span></p>
+                        <p><span class="list_l">盘点日期:{{item.take_stock_time}}</span><span>盘点差异:{{item.is_pre_profit_and_loss}}</span></p>
                     </li>
                 </ul>
             </div>

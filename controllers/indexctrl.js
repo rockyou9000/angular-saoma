@@ -9,7 +9,7 @@ var indexCtrl = [
         $scope.BA_NAME = '周骏';
 
 
-        $scope.PAPER_NUM = 00653326545;
+        $scope.PAPER_NUM = "系统自动生成";
         $rootScope.selectShop = '';
         $scope.PAN_DATE = '';
 
@@ -29,8 +29,8 @@ var indexCtrl = [
                     close: '关闭'
                         // min: '10/1/2016',
                         // max: '10/22/2016'
-
                 });
+
             })
 
         }
@@ -41,8 +41,19 @@ var indexCtrl = [
         $scope.showConfig = function() {
             $location.path('/config');
         };
+        //跳转至盘点列表
         $scope.showPan = function() {
-            $location.path('/pandian');
+            $http.get('http://192.168.253.175/devipos/api/web/index.php?app_act=stock/stm_take_stock_by_lqxshop/get_list_by_lqx&is_add_person=110739').then(function(ret) {
+                // alert(JSON.stringify(ret))
+                if (!ret) return;
+                if (ret.status) {
+                    $rootScope.stork_list = ret.data.data //把列表数组保存至rootScope stork_list变量中
+                    $location.path('/pandian')
+                }
+            }).catch(function() {
+                alert('获取列表失败')
+            })
+
         };
 
         $scope.modal_save = function() {
@@ -54,8 +65,8 @@ var indexCtrl = [
 
         $scope.searchShops = function() {
 
-            // 打开商品列表
-            window_good = ngDialog.open({
+            // 打开门店列表
+            window_shop = ngDialog.open({
                 closeByDocument: false,
                 trapFocus: false,
                 template: './html/dialog_sel_shop.html',
@@ -95,7 +106,6 @@ var indexCtrl = [
             });
 
         }
-
     }
 ]
 
