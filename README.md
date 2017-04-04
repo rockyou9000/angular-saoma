@@ -1,5 +1,8 @@
-# angular-saoma
+# angular-saoma-app
 
-基于Angular 的林清轩门店扫码工具 持续更新
+### 基于Angular 的林清轩门店扫码工具 持续更新
 
-app 编译使用APICLOUD平台 
+* AngularJS 1.3.5
+* Angular-route
+* fetch.js
+* APICloud
